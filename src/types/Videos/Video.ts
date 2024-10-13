@@ -6,7 +6,7 @@ export type Video = {
     minAgeRestriction: number | null,
     createdAt: string,
     publicationDate: string,
-    availableResolutions: Resolutions[] | null
+    availableResolutions: Resolutions[]
 }
 
 export enum Resolutions {
