@@ -121,7 +121,7 @@ describe('tests for /videos', async () => {
             title: '',
             author: '',
             availableResolutions: [],
-            canBeDownloaded: false,
+            canBeDownloaded: 'test',
             minAgeRestriction: 20,
             publicationDate: 'test'
         }
@@ -135,7 +135,8 @@ describe('tests for /videos', async () => {
                     { message: 'Invalid title.', field: 'title' },
                     { message: 'Invalid author name.', field: 'author' },
                     { message: 'An incorrect value range was passed.', field: 'minAgeRestriction' },
-                    { message: 'Invalid date format.', field: 'publicationDate'}
+                    { message: 'Invalid date format.', field: 'publicationDate'},
+                    { message: 'Invalid type passed.', field: 'canBeDownloaded'}
                 ]
             })
     })

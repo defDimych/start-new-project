@@ -57,6 +57,13 @@ const UpdateInputValidation = (video: UpdateVideoInputModel) => {
             field: 'publicationDate'
         })
     }
+
+    if (typeof video.canBeDownloaded !== 'boolean') {
+        errors.errorsMessages.push({
+            message: 'Invalid type passed.',
+            field: 'canBeDownloaded'
+        })
+    }
     return errors;
 }
 const CreateInputValidation = (video: CreateVideoInputModel) => {
