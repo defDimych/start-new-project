@@ -5,6 +5,7 @@ import {Resolutions, Video} from "./types/Videos/Video";
 import {CreateVideoInputModel} from "./types/Videos/CreateVideoInputModel";
 import {OutputErrorsType} from "./types/OutputErrorsType";
 import {UpdateVideoInputModel} from "./types/Videos/UpdateVideoInputModel";
+import {isoPattern} from "../__tests__/videos.e2e.test";
 
 // create app
 export const app = express()
@@ -13,8 +14,60 @@ app.use(express.json());
 
 let dbVideos: Video[] = [];
 
+const UpdateInputValidation = (video: UpdateVideoInputModel) => {
+    const errors: OutputErrorsType = {
+        errorsMessages: []
+    }
 
-const inputValidation = (video: UpdateVideoInputModel | CreateVideoInputModel) => {
+    if (!Array.isArray(video.availableResolutions) || !video.availableResolutions.length) {
+        errors.errorsMessages.push({
+            message: 'error!!!',
+            field: 'availableResolutions'
+        })
+    }
+
+    for (const item of video.availableResolutions) {
+        if (!Object.values(Resolutions).includes(item)) {
+            errors.errorsMessages.push({
+                message: 'Invalid resolution format.',
+                field: 'availableResolutions'
+            })
+            break;
+        }
+    }
+
+    if (!video.title || video.title.length > 40) {
+        errors.errorsMessages.push({
+            message: 'Invalid title.',
+            field: 'title'
+        })
+    }
+
+    if (!video.author || video.author.length > 20) {
+        errors.errorsMessages.push({
+            message: 'Invalid author name.',
+            field: 'author'
+        })
+    }
+
+    if (video.minAgeRestriction !== null) {
+        if (video.minAgeRestriction < 1 || video.minAgeRestriction > 18) {
+            errors.errorsMessages.push({
+                message: 'An incorrect value range was passed.',
+                field: 'minAgeRestriction'
+            })
+        }
+    }
+
+    if (!isoPattern.test(video.publicationDate)) {
+        errors.errorsMessages.push({
+            message: 'Invalid date format.',
+            field: 'publicationDate'
+        })
+    }
+    return errors;
+}
+const CreateInputValidation = (video: CreateVideoInputModel) => {
     const errors: OutputErrorsType = {
         errorsMessages: []
     }
@@ -64,7 +117,7 @@ app.get(SETTINGS.PATH.VIDEOS, (req: Request, res: Response) => {
 })
 app.post(SETTINGS.PATH.VIDEOS,
     (req: Request<any, any, CreateVideoInputModel>, res: Response<Video | OutputErrorsType>) => {
-    const errors = inputValidation(req.body);
+    const errors = CreateInputValidation(req.body);
 
     if (errors.errorsMessages.length) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errors);
@@ -106,7 +159,7 @@ app.put(SETTINGS.PATH.VIDEOS + '/:id',
         }
 
         // TODO: Вопрос с валидацией
-        const errors = inputValidation(req.body);
+        const errors = UpdateInputValidation(req.body);
 
         if (errors.errorsMessages.length) {
             res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errors);
