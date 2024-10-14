@@ -4,7 +4,7 @@ import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
 import {Video} from "../src/types/Videos/Video";
 
-const isoPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+export const isoPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 describe('tests for /videos', async () => {
     beforeAll(async () => {
@@ -122,8 +122,8 @@ describe('tests for /videos', async () => {
             author: '',
             availableResolutions: [],
             canBeDownloaded: false,
-            minAgeRestriction: null,
-            publicationDate: new Date().toISOString()
+            minAgeRestriction: 20,
+            publicationDate: 'test'
         }
 
         await req
@@ -133,7 +133,9 @@ describe('tests for /videos', async () => {
                 errorsMessages: [
                     { message: 'error!!!', field: 'availableResolutions' },
                     { message: 'Invalid title.', field: 'title' },
-                    { message: 'Invalid author name.', field: 'author' }
+                    { message: 'Invalid author name.', field: 'author' },
+                    { message: 'An incorrect value range was passed.', field: 'minAgeRestriction' },
+                    { message: 'Invalid date format.', field: 'publicationDate'}
                 ]
             })
     })
